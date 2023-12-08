@@ -4,7 +4,7 @@ This project contains a Clang-Tidy configuration which I deem reasonable for my 
 
 ## Configuration rationale
 
-1. We start out with CLion's default Clang-Tidy configuration. For reference, these are the checks which are enabled by
+1. We start out with CLion’s default Clang-Tidy configuration. For reference, these are the checks which are enabled by
    default:
 
    ```
@@ -31,7 +31,6 @@ This project contains a Clang-Tidy configuration which I deem reasonable for my 
    bugprone-move-forwarding-reference
    bugprone-multiple-statement-macro
    bugprone-no-escape
-   bugprone-not-null-terminated-result
    bugprone-parent-virtual-call
    bugprone-posix-return
    bugprone-reserved-identifier
@@ -43,12 +42,12 @@ This project contains a Clang-Tidy configuration which I deem reasonable for my 
    bugprone-string-literal-with-embedded-nul
    bugprone-suspicious-enum-usage
    bugprone-suspicious-include
+   bugprone-suspicious-memory-comparison
    bugprone-suspicious-memset-usage
    bugprone-suspicious-missing-comma
+   bugprone-suspicious-realloc-usage
    bugprone-suspicious-semicolon
    bugprone-suspicious-string-compare
-   bugprone-suspicious-memory-comparison
-   bugprone-suspicious-realloc-usage
    bugprone-swapped-arguments
    bugprone-terminating-continue
    bugprone-throw-keyword-missing
@@ -156,19 +155,21 @@ This project contains a Clang-Tidy configuration which I deem reasonable for my 
    readability-use-anyofallof
    ```
 
-2. We disable vendor- and application-specific checks: I don't think that a default linting configuration should depend
+2. We disable vendor- and application-specific checks: I don’t think that a default linting configuration should depend
    on any particular style.
 
-   The following list describes the checks to be disabled:
+   The following listing describes the checks to be disabled:
 
-   * `cert-*`;
-   * `google-*`;
-   * `hicpp-*`;
-   * `mpi-*`;
-   * `openmp-*`.
+   ```
+   cert-*
+   google-*
+   hicpp-*
+   mpi-*
+   openmp-*
+   ```
 
-   Clang-Tidy has a huge amount of checks; it is unrealistic to go through them all. We'll assume that all other checks
-   enabled by CLion's default configuration are adequate.
+   Clang-Tidy has a huge amount of checks; it is unrealistic to go through them all. We’ll assume that all other checks
+   enabled by CLion’s default configuration are adequate.
 
 3. We enable all `clang-analyzer-*` checks: this should be a reasonable default set of options to be enabled. Further,
    given that Boost is frequently used, we enable `boost-*` checks.
@@ -195,65 +196,86 @@ This project contains a Clang-Tidy configuration which I deem reasonable for my 
 
    Checks enabled due to this step are:
 
-   * `bugprone-bool-pointer-implicit-conversion` (i);
-   * `bugprone-exception-escape` (i);
-   * `bugprone-implicit-widening-of-multiplication-result` (i);
-   * `bugprone-infinite-loop` (i);
-   * `bugprone-multiple-new-in-one-expression` (i);
-   * `bugprone-narrowing-conversions` (i);
-   * `bugprone-non-zero-enum-to-bool-conversion` (i);
-   * `bugprone-redundant-branch-condition` (i);
-   * `bugprone-shared-ptr-array-mismatch` (i);
-   * `bugprone-signal-handler` (i);
-   * `bugprone-signed-char-misuse` (i);
-   * `bugprone-standalone-empty` (i);
-   * `bugprone-stringview-nullptr` (i);
-   * `bugprone-unchecked-optional-access` (i);
-   * `bugprone-unhandled-exception-at-new` (i);
-   * `bugprone-unsafe-functions` (i);
-   * `concurrency-*` (i);
-   * `cppcoreguidelines-avoid-capturing-lambda-coroutines` (i);
-   * `cppcoreguidelines-avoid-const-or-ref-data-members` (i);
-   * `cppcoreguidelines-avoid-reference-coroutine-parameters` (i);
-   * `cppcoreguidelines-c-copy-assignment-signature` (i);
-   * `cppcoreguidelines-explicit-virtual-functions` (A, E);
-   * `cppcoreguidelines-macro-usage` (i);
-   * `cppcoreguidelines-misleading-capture-default-by-value` (i);
-   * `cppcoreguidelines-missing-std-forward` (i);
-   * `cppcoreguidelines-no-malloc` (i, v);
-   * `cppcoreguidelines-pro-type-cstyle-cast` (v);
-   * `cppcoreguidelines-rvalue-reference-param-not-moved` (i);
-   * `cppcoreguidelines-special-member-functions` (i);
-   * `cppcoreguidelines-virtual-class-destructor` (i);
-   * `misc-confusable-identifiers` (i);
-   * `misc-const-correctness` (i);
-   * `misc-definitions-in-headers` (i);
-   * `misc-misleading-bidirectional` (i);
-   * `misc-misleading-identifier` (i);
-   * `misc-redundant-expression` (i);
-   * `misc-static-assert` (i);
-   * `misc-unused-alias-decls` (i);
-   * `misc-unused-parameters` (i);
-   * `misc-unused-using-decls` (i);
-   * `modernize-macro-to-enum` (i, v);
-   * `modernize-type-traits` (v);
-   * `modernize-use-using` (v);
-   * `performance-no-int-to-ptr` (i);
-   * `portability-*` (i);
-   * `readability-avoid-unconditional-preprocessor-if` (i);
-   * `readability-container-contains` (i);
-   * `readability-container-data-pointer` (i);
-   * `readability-duplicate-include` (i);
-   * `readability-implicit-bool-conversion` (i);
-   * `readability-isolate-declaration` (i);
-   * `readability-operators-representation` (i);
-   * `readability-qualified-auto` (i);
-   * `readability-redundant-access-specifiers` (i);
-   * `readability-redundant-member-init` (i);
-   * `readability-redundant-preprocessor` (i);
-   * `readability-simplify-boolean-expr` (i);
-   * `readability-suspicious-call-argument` (i);
-   * `readability-uppercase-literal-suffix` (i).
+   ```
+   bugprone-bool-pointer-implicit-conversion
+   bugprone-branch-clone
+   bugprone-compare-pointer-to-member-virtual-function
+   bugprone-exception-escape
+   bugprone-implicit-widening-of-multiplication-result
+   bugprone-inc-dec-in-conditions
+   bugprone-incorrect-enable-if
+   bugprone-infinite-loop
+   bugprone-multi-level-implicit-pointer-conversion
+   bugprone-multiple-new-in-one-expression
+   bugprone-narrowing-conversions
+   bugprone-non-zero-enum-to-bool-conversion
+   bugprone-not-null-terminated-result
+   bugprone-optional-value-conversion
+   bugprone-redundant-branch-condition
+   bugprone-shared-ptr-array-mismatch
+   bugprone-signal-handler
+   bugprone-signed-char-misuse
+   bugprone-standalone-empty
+   bugprone-stringview-nullptr
+   bugprone-unchecked-optional-access
+   bugprone-unhandled-exception-at-new
+   bugprone-unique-ptr-array-mismatch
+   bugprone-unsafe-functions
+   cppcoreguidelines-avoid-capturing-lambda-coroutines
+   cppcoreguidelines-avoid-const-or-ref-data-members
+   cppcoreguidelines-avoid-reference-coroutine-parameters
+   cppcoreguidelines-c-copy-assignment-signature
+   cppcoreguidelines-explicit-virtual-functions
+   cppcoreguidelines-macro-to-enum
+   cppcoreguidelines-macro-usage
+   cppcoreguidelines-misleading-capture-default-by-value
+   cppcoreguidelines-missing-std-forward
+   cppcoreguidelines-no-malloc
+   cppcoreguidelines-no-suspend-with-lock
+   cppcoreguidelines-noexcept-destructor
+   cppcoreguidelines-noexcept-move-operations
+   cppcoreguidelines-noexcept-swap
+   cppcoreguidelines-pro-type-cstyle-cast
+   cppcoreguidelines-rvalue-reference-param-not-moved
+   cppcoreguidelines-special-member-functions
+   cppcoreguidelines-virtual-class-destructor
+   misc-confusable-identifiers
+   misc-const-correctness
+   misc-definitions-in-headers
+   misc-header-include-cycle
+   misc-include-cleaner
+   misc-misleading-bidirectional
+   misc-misleading-identifier
+   misc-redundant-expression
+   misc-static-assert
+   misc-unused-alias-decls
+   misc-unused-parameters
+   misc-unused-using-decls
+   modernize-macro-to-enum
+   modernize-type-traits
+   modernize-use-constraints
+   modernize-use-std-print
+   modernize-use-using
+   performance-enum-size
+   performance-no-int-to-ptr
+   performance-noexcept-destructor
+   performance-noexcept-swap
+   readability-avoid-unconditional-preprocessor-if
+   readability-container-contains
+   readability-container-data-pointer
+   readability-duplicate-include
+   readability-implicit-bool-conversion
+   readability-isolate-declaration
+   readability-operators-representation
+   readability-qualified-auto
+   readability-redundant-access-specifiers
+   readability-redundant-member-init
+   readability-redundant-preprocessor
+   readability-reference-to-constructed-temporary
+   readability-simplify-boolean-expr
+   readability-suspicious-call-argument
+   readability-uppercase-literal-suffix
+   ```
 
 Following the steps described above, we get the following Clang-Tidy configuration:
 
@@ -263,6 +285,8 @@ boost-*
 bugprone-*
 -bugprone-assignment-in-if-condition
 -bugprone-easily-swappable-parameters
+-bugprone-empty-catch
+-bugprone-switch-missing-default-case
 clang-analyzer-*
 concurrency-*
 cppcoreguidelines-*

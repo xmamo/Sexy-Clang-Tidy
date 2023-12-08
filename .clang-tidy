@@ -4,6 +4,8 @@ Checks:
   - bugprone-*
   - -bugprone-assignment-in-if-condition
   - -bugprone-easily-swappable-parameters
+  - -bugprone-empty-catch
+  - -bugprone-switch-missing-default-case
   - clang-analyzer-*
   - concurrency-*
   - cppcoreguidelines-*
