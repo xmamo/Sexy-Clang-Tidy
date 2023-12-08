@@ -264,6 +264,7 @@ This project contains a Clang-Tidy configuration which I deem reasonable for my 
    readability-container-contains
    readability-container-data-pointer
    readability-duplicate-include
+   readability-identifier-naming
    readability-implicit-bool-conversion
    readability-isolate-declaration
    readability-operators-representation
@@ -323,7 +324,6 @@ readability-*
 -readability-function-cognitive-complexity
 -readability-function-size
 -readability-identifier-length
--readability-identifier-naming
 -readability-magic-numbers
 -readability-named-parameter
 ```
